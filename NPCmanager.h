@@ -9,7 +9,7 @@
 #include "Utils.h"
 
 class NPCmanager{
-    static const int maxNpcSize = 30;
+    static const int maxNpcSize = 40;
     NPC* npc_array[maxNpcSize] = { nullptr };
     int currentSize = 0;
     float timeElapsed = 0.f;
@@ -26,8 +26,8 @@ public:
     void setProjectiles(float dt, GameObject& obj, Camera& camera);
     void drawProjectiles(GamesEngineeringBase::Window& canvas);
 
-    bool getIsAnyAggroActive();
-    NPC* const getClosestNPCtoPlayer(Player& player);
+    bool getIfNPCinPlayerAttackRange();
+    NPC* const getClosestNPCtoPlayer();
 };
 
 #endif

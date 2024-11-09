@@ -12,6 +12,8 @@ NPC::NPC(Vec2 _pos, string filename, int _maxHealth, float _speed) {
     maxHealth = _maxHealth;
     health = _maxHealth;
     speed = _speed;
+    ProjSpeed = 280.f; // speed of NPC's projectiles
+    shootingRange = aggroRange + 80; // range of NPC launch projectiles 
 }
 
 int NPC::getNPCPlayerDistance() const {
@@ -20,14 +22,6 @@ int NPC::getNPCPlayerDistance() const {
 
 int NPC::getSpeed() const {
     return speed;
-}
-
-void NPC::takeDamage() {
-    health -= 3;
-}
-
-bool NPC::isAlive() {
-    return(health > 0);
 }
 
 void NPC::update(float dt, Vec2& playerPos, Camera& cam) {

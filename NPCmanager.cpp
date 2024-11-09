@@ -41,12 +41,6 @@ Vec2 NPCmanager::generateStartPos(Camera& camera) {
 
     return t;
 }
-// NPC* const* NPCmanager::getNPCArray() const{
-//    return npc_array;
-//}
-//const int NPCmanager::getCurrentSize()const {
-//    return currentSize;
-//}
 
 void NPCmanager::generateNPC(Camera& camera, float& dt) {
     timeElapsed += dt;
@@ -59,19 +53,19 @@ void NPCmanager::generateNPC(Camera& camera, float& dt) {
             string filename = "Resources/npc" + to_string(NPCtypeIndex) + ".png";
             switch (NPCtypeIndex) {
             case 0:
-                health = 38;
+                health = 360;
                 speed = 0.f; //shooter
                 break;
             case 1:
-                health = 22;
+                health = 180;
                 speed = 430.f;
                 break;
             case 2:
-                health = 30;
+                health = 240;
                 speed = 300.f;
                 break;
             case 3:
-                health = 34;
+                health = 300;
                 speed = 250.f;
                 break;
             }
@@ -82,16 +76,16 @@ void NPCmanager::generateNPC(Camera& camera, float& dt) {
             npc_array[currentSize++] = _npc;
             timeElapsed = 0.f;
             timeThreshold -= 0.1f;
-            timeThreshold = max(0.3f, timeThreshold); //threshold keep reducing till it is 0.3f 
+            timeThreshold = max(0.3f, timeThreshold); //threshold keep reducing till it is 0.2f 
         }
     }
 }
 void NPCmanager::checkDeleteNPC(unsigned int i) {
-    if (!npc_array[i]->isAlive()) { //dead
+    if (!npc_array[i]->getIsAlive()) { //dead
         NPC* _npc = npc_array[i];
         npc_array[i] = nullptr;
         delete _npc;
-        cout << "delete NPC: " << i << endl;
+        cout << "kILLED NPC: " << i << endl;
     }
 }
 
@@ -104,6 +98,7 @@ void NPCmanager::update(float& dt, Vec2& playerPos, Camera& camera) {
         }
     }
 }
+
 void NPCmanager::draw(Window& canvas) {
     for (int i = 0; i < currentSize; i++) {
         if (npc_array[i] != nullptr) {
@@ -142,16 +137,17 @@ void NPCmanager::drawProjectiles(Window& canvas) {
     }
 }
 
-bool NPCmanager::getIsAnyAggroActive() {
+bool NPCmanager::getIfNPCinPlayerAttackRange() {
     for (int i = 0; i < currentSize; i++) {
-        if (npc_array[i] != nullptr && npc_array[i]->getIsAggroActive()) {
+        if (npc_array[i] != nullptr && 
+            npc_array[i]->getNPCPlayerDistance() < linearAttackRange) {
             return true;
         }
     }
     return false;
 }
 
-NPC* const NPCmanager::getClosestNPCtoPlayer(Player & player) {
+NPC* const NPCmanager::getClosestNPCtoPlayer() {
     int min = 1000;
     int index = -1;
     for (int i = 0; i < currentSize; i++) {

@@ -16,12 +16,12 @@ private:
 	float speed;
 	int distanceProjMoved;
 	int projTargetDistance;
-	const int shootingRange = 700;
+	int shootingRange;
 
 	bool isCollided = false; //if projectile hits the player/NPC
 	bool isAlive = true; //when isAlive == false,delete the projectile
 public:
-	Projectiles(Vec2 _worldPos, Vec2 _target, float _speed);
+	Projectiles(Vec2 _worldPos, Vec2 _target, float _speed, int _shootingRange);
 	~Projectiles();
 	void update(float dt, Camera& cam);
 	void draw(GamesEngineeringBase::Window& canvas, int projSize, Vec3 color);

@@ -11,11 +11,11 @@ ProjsManager::~ProjsManager() {
     }
 }
 
-void ProjsManager::generateProjs(float dt, Vec2 worldPos, Vec2 target) {
+void ProjsManager::generateProjs(float dt, Vec2 worldPos, Vec2 target, float speed, int shootingRange) {
     timeElapsed += dt;
     if (currentSize < maxProjSize) {
         if (timeElapsed > timeThreshold) {
-            Projectiles* proj = new Projectiles(worldPos, target, 300.f);
+            Projectiles* proj = new Projectiles(worldPos, target, speed, shootingRange);
             projs[currentSize++] = proj;
             timeElapsed = 0.f;
             //cout << "player" << worldPos.x << " " << worldPos.y << endl;
@@ -23,6 +23,7 @@ void ProjsManager::generateProjs(float dt, Vec2 worldPos, Vec2 target) {
     }
 }
 
+// delete the projectile which's isAlive == false
 void ProjsManager::checkDeleteProj(unsigned int i) {
     if (!projs[i]->getIsAlive()) { //dead
         Projectiles* _p = projs[i];
@@ -32,21 +33,27 @@ void ProjsManager::checkDeleteProj(unsigned int i) {
     }
 }
 
-void ProjsManager::update(float dt, Vec2 worldPos, Vec2 objWorldPos, Camera& camera) {
-    generateProjs(dt, worldPos, objWorldPos);
+void ProjsManager::update(float dt, Vec2 worldPos, Vec2 objWorldPos, Camera& camera, float speed, int shootingRange) {
+    generateProjs(dt, worldPos, objWorldPos, speed, shootingRange);
     
     for (int i = 0; i < currentSize; i++) {
         if (projs[i] != nullptr) { 
+            // update projectile movement
             projs[i]->update(dt, camera);
+            // if projectile move out of shooting range, set isAlive as false
+            // and delete this projectile
             checkDeleteProj(i);
         }
     }
 }
 
+// check if any projectile hit the target (Player/NPC)
 bool ProjsManager::checkProjEntityCollision(Vec2 objWorldPos, int sprietSize) {
     for (int i = 0; i < currentSize; i++) {
         if (projs[i] != nullptr) {
             if (projs[i]->checkCollision(objWorldPos, sprietSize)) {
+                // if projectile hit the target, set isAlive as false
+                // and delete this projectile
                 checkDeleteProj(i);
                 return true;
             }

@@ -11,16 +11,18 @@ Player::Player(int _x, int _y, string filename) {
     worldPos.x = _x ;
     worldPos.y = _y ;
     speed = 220.f;
+    ProjSpeed = 400.f; // speed of player's projectiles
+    shootingRange = linearAttackRange; // range of player launch projectiles, as linear attack
 }
 
 void Player::updateMovementAnim(string name) {
     string fileName1 = "Resources/" + name + "0.png";
     string fileName2 = "Resources/" + name + "1.png";
-    if (timeElapsed < timeThreshold) sprite.load(fileName1);
-    else if (timeElapsed < 2 * timeThreshold) {
+    if (timeElapsed_anim < timeThreshold_anim) sprite.load(fileName1);
+    else if (timeElapsed_anim < 2 * timeThreshold_anim) {
         sprite.load(fileName2);
     }
-    else timeElapsed = 0.f;
+    else timeElapsed_anim = 0.f;
 }
 
 void Player::update(float dt, Window& canvas, World& world, Camera& cam) {
@@ -28,7 +30,7 @@ void Player::update(float dt, Window& canvas, World& world, Camera& cam) {
     int moveX = 0;
     int moveY = 0;
 
-    timeElapsed += dt;
+    timeElapsed_anim += dt;
     if (canvas.keyPressed('W')) {
         updateMovementAnim("up");
         moveY -= move;
@@ -46,6 +48,11 @@ void Player::update(float dt, Window& canvas, World& world, Camera& cam) {
     if (canvas.keyPressed('D')) {
         updateMovementAnim("right");
         moveX += move;
+    }
+    // apply AOE attack
+    if (canvas.keyPressed('Q')) {
+        ifApplyAOE = true;
+        //cout << "AOE applied" << endl;
     }
 
     int posXNew = worldPos.x + moveX;
@@ -65,6 +72,10 @@ void Player::update(float dt, Window& canvas, World& world, Camera& cam) {
     // checks if the flicker effect should stop based on elapsed time 
     updateFlickerState(dt);
 }
+
+//void Player::applyAOE() {
+
+//}
 
 //bool Player::checkCollision(NPC& p) {
 //    int x2 = (worldPos.x - p.worldPos.x) * (worldPos.x - p.worldPos.x);

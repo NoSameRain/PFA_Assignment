@@ -3,11 +3,12 @@
 using namespace GamesEngineeringBase;
 using namespace std;
 
-Projectiles::Projectiles(Vec2 _worldPos, Vec2 _target, float _speed) {
+Projectiles::Projectiles(Vec2 _worldPos, Vec2 _target, float _speed, int _shootingRange) {
     worldPos = _worldPos;
 	speed = _speed;
     targetPos = _target;
     distanceProjMoved = 0;
+    shootingRange = _shootingRange;
     projTargetDistance = static_cast<int>(sqrt(pow(worldPos.x - targetPos.x, 2) + pow(worldPos.y - targetPos.y, 2)));
     // compute stopPosition by finding a point along the line between worldPos and targetPos, 
     // scaled to match a specified shootingRange
@@ -47,12 +48,11 @@ void Projectiles::draw(Window& canvas, int projSize, Vec3 color) {
 
 bool Projectiles::checkCollision(Vec2 pos, int spriteSize) {
     int s = spriteSize / 2;
-    if (worldPos.x >= pos.x - s && worldPos.x <= pos.x + s - 6
-        && worldPos.y >= pos.y - s && worldPos.y <= pos.y + s - 6) {
+    // Check if the projectile's world position is within the bounds of the NPC's/Player's sprite area
+    // If so, a collision is detected and the function returns true
+    if (worldPos.x > pos.x - s && worldPos.x < pos.x + s - 6
+        && worldPos.y > pos.y - s && worldPos.y < pos.y + s - 6) {
         isAlive = false;
-        std::cout << "proj collision" << std::endl;
-        std::cout << pos.x << " "<<pos.y << std::endl;
-        std::cout << worldPos.x << " " << worldPos.y << std::endl;
         return true;
     }
     return false;

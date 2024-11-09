@@ -15,11 +15,8 @@ public:
 	NPC(Vec2 _pos,std::string filename,int _maxHealth,float _speed);
 	int getNPCPlayerDistance() const;
 	int getSpeed()const;
-	bool isAlive();
 	void update(float dt, Vec2& playerPos, Camera& cam);
-	void takeDamage();
 	bool checkCollision(Vec2 playerPos);
-
 	bool getIsAggroActive();
 };
 

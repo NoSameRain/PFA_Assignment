@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include<iostream>
 using namespace GamesEngineeringBase;
 
 void GameObject::draw(Window& canvas) {
@@ -30,34 +31,51 @@ void GameObject::drawFlicker(Window& canvas, Vec3 flickerColor) {
 
 void GameObject::drawHealthBar(Window& canvas) {
     int barHeight = 4;
+    //draw health bar start from NPC's screen system position and higher than the top of NPC's sprite
     int startPosX = screenPos.x;
     int startPosY = screenPos.y - 8;
-    for (unsigned int i = 0; i < maxHealth; i++) {
+    // maxHealth will be drawn as a black background bar, represents initial health value
+    // health will decrease as NPC is attacked, so the red health bar will become shorter
+    for (unsigned int i = 0; i < maxHealth/10; i++) {
         for (unsigned int j = 0; j < barHeight; j++) {
             if (startPosX + i >= 0 && startPosX + i < canvas.getWidth() &&
                 startPosY + j >= 0 && startPosY + j < canvas.getHeight()) {
+                //draw black maxHealth bar as background
                 canvas.draw(i + startPosX, j + startPosY, 0, 0, 0);
-                if (i <= health) canvas.draw(i + startPosX, j + startPosY, 255, 0, 0);
+                //draw red health bar based on the current health level
+                if (i <= health/10) canvas.draw(i + startPosX, j + startPosY, 255, 0, 0);
             }
         }
     }
 }
 
 void GameObject::updateProjectiles(float dt, GameObject& obj, Camera& camera) {
-    //launch projectiles from the middle position of NPC sprite
+    // midWorldPos: the starting position of projectiles,
+    // -- calculated as the center of the NPC/Player sprite
     Vec2 midWorldPos;
     midWorldPos.x = worldPos.x + sprite.width / 2;
     midWorldPos.y = worldPos.y + sprite.height / 2;
+
+    // midObjWorldPos: the target position for projectiles, 
+    // -- calculated as the center of the target (Player/NPC) sprite
     Vec2 midObjWorldPos;
     midObjWorldPos.x = obj.getWorldPos().x + obj.getSpriteSize() / 2;
     midObjWorldPos.y = obj.getWorldPos().y + obj.getSpriteSize() / 2;
-    projs.update(dt, midWorldPos, midObjWorldPos, camera);
+
+    // update projectiles' state
+    projs.update(dt, midWorldPos, midObjWorldPos, camera, ProjSpeed, shootingRange);
+
+    // check if projectiles hit the target (Player/NPC)
     if (projs.checkProjEntityCollision(midObjWorldPos, obj.getSpriteSize())) {
+        // set flag to draw target with flickering effect to show it's hitted by projectile
         obj.setIfStartFlicker(true);
+        // reduce target obj health value for 60 when hit by each projectile
+        obj.applyDamage(60); 
     }
 }
 
 void GameObject::drawProjectiles(Window& canvas, int projSize, Vec3 color) {
+    //draw each projectile with specific width/height and color
     projs.draw(canvas, projSize, color);
 }
 
@@ -70,4 +88,13 @@ void GameObject::updateFlickerState(float dt) {
             flickerTimer = 0.f;
         }
     }
+}
+
+void GameObject::applyDamage(int value) {
+    if (health > 0) health -= value;
+    else health = 0;
+}
+
+bool GameObject::getIsAlive() {
+    return(health > 0);
 }
