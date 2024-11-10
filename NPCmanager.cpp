@@ -100,7 +100,7 @@ void NPCmanager::update(float& dt, Vec2& playerPos, Camera& camera) {
         sort_health_array[i].x = i;
         if (npc_array[i] != nullptr) {
             npc_array[i]->update(dt, playerPos, camera);
-            // store npc index and health in this array to sort top five health NPC 
+            // update NPC index and health in this array for sorting later
             sort_health_array[i].y = npc_array[i]->getHealth();
             // if NPC's alive state is false, delete it
             checkDeleteNPC(i);
@@ -149,7 +149,7 @@ void NPCmanager::drawProjectiles(Window& canvas) {
         }
     }
 }
-
+// check if any NPC is in the linear attack range of player
 bool NPCmanager::getIfNPCinPlayerAttackRange() {
     for (int i = 0; i < currentSize; i++) {
         if (npc_array[i] != nullptr && 
@@ -159,11 +159,7 @@ bool NPCmanager::getIfNPCinPlayerAttackRange() {
     }
     return false;
 }
-void swap(Vec2& a, Vec2& b) {
-    Vec2 tmp = a;
-    a = b;
-    b = tmp;
-}
+
 // return NPC pointer , which is closest to player, to trigger player's linear attack
 NPC* const NPCmanager::getClosestNPCtoPlayer() {
     int min = 1000;
@@ -183,21 +179,41 @@ NPC* const NPCmanager::getClosestNPCtoPlayer() {
     return npc_array[index];
 }
 
-//
-void QuickSortByHealth(Vec2* arr, int begin, int end)
-{
-    if (begin >= end) return;
-    int left = begin;
+void swap(Vec2& a, Vec2& b) {
+    Vec2 tmp = a;
+    a = b;
+    b = tmp;
+}
+
+// QuickSortByHealth function: sorts an array of Vec2 structures based on 
+// the 'y' value (representing health) in descending order.
+// 
+// arr: pointer to array of Vec2 structures to be sorted
+// start: starting index of sorting
+// end: ending index
+void QuickSortByHealth(Vec2* arr, int start, int end)
+{   
+    // base case : if there's only one or none element in sub_array
+    if (start >= end) return;
+    int left = start;
     int right = end;
-    int key = begin;
-    while (begin < end)
+    int key = start; //set the pivot
+    //partition array
+    while (start < end)
     {
-        while (arr[end].y <= arr[key].y && begin < end) end--;
-        while (arr[begin].y >= arr[key].y && begin < end) begin++;
-        swap(arr[begin], arr[end]);
+        // select the bigger one in the left
+        // move [end] to left if [end]'s value less than pivot's
+        while (arr[end].y <= arr[key].y && start < end) end--;
+        // select the smaller one in the right
+        // move [start] to right if [start]'s value bigger than pivot's
+        while (arr[start].y >= arr[key].y && start < end) start++;
+        // swap those out of order 
+        swap(arr[start], arr[end]);
     }
+    // place pivot
     swap(arr[key], arr[end]);
     key = end;
+    // sort subarray
     QuickSortByHealth(arr, left, key - 1);
     QuickSortByHealth(arr, key + 1, right);
 }
@@ -207,17 +223,27 @@ void NPCmanager::attackTopFiveHealthNPC() {
     // Vec2 sort_health_array[40]: each element is a Vec2{x,y} object
     // x: stores NPC* npc_array index
     // y: stores corresponding health value
+
+    //sort sort_health_array in descending order based on 'y' value (health)
     QuickSortByHealth(sort_health_array, 0, 39);
+
     int cnt = 0;
+    // for test: output all the sorted health value
+    cout << "health of all the NPCs generated currently: ";
+    for (int i = 0; i < currentSize; i++) cout << sort_health_array[i].y << " ";
+    cout << endl;
+    cout << "health of NPCs inside AOE range: ";
     for (int i = 0; i < currentSize; i++) {
-        //cout << sort_health_array[i].y << " " ;
         int index = sort_health_array[i].x;
         if (cnt < 5 && npc_array[index] != nullptr) {
+            // for those NPCs whose health is highest, select at most 5 NPCs who is inside AOEAttackRange
             if (npc_array[index]->getNPCPlayerDistance() < AOEAttackRange) {
+                // reduce NPC health level by AOEDamage value, which is less than linear attack Damage
                 npc_array[index]->applyDamage(AOEDamage);
+                // the NPC hit by AOE attack would flicker green to indicate damage taken
                 npc_array[index]->setIfStartFlicker(2);
                 cnt++;
-                //cout <<"health: " << sort_health_array[i].y << " ";
+                cout << sort_health_array[i].y << " ";
             }
         }
             
