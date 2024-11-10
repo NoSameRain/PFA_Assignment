@@ -25,6 +25,7 @@ class NPCmanager{
 public:
     NPCmanager();
     ~NPCmanager();
+    NPCmanager& operator=(const NPCmanager& other);
     void update(float& dt, Vec2& playerPos, Camera& camera);
     void draw(GamesEngineeringBase::Window& canvas);
     void checkNPCPlayerCollision(Player& player);
@@ -34,6 +35,10 @@ public:
     bool getIfNPCinPlayerAttackRange();
     NPC* const getClosestNPCtoPlayer();
     void attackTopFiveHealthNPC();
+
+    //serialization------------------------------------
+    void serialize(std::ofstream& out) const;
+    void deserialize(std::ifstream& in);
 };
 
 #endif

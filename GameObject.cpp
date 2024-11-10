@@ -1,6 +1,25 @@
 #include "GameObject.h"
-#include<iostream>
+#include <iostream>
+#include <fstream>
 using namespace GamesEngineeringBase;
+
+GameObject& GameObject::operator=(const GameObject& other) {
+    if (this == &other) {
+        return *this; // Handle self-assignment
+    }
+
+    // Copy simple data members
+    worldPos.x = other.worldPos.x;
+    worldPos.y = other.worldPos.y;
+    screenPos.x = other.screenPos.x;
+    screenPos.y = other.screenPos.y;
+    health = other.health;
+    speed = other.speed;
+    ifStartFlicker = other.ifStartFlicker;
+    sprite.load(Spritefilename);
+
+    return *this;
+}
 
 void GameObject::draw(Window& canvas) {
     for (unsigned int i = 0; i < sprite.width; i++) {
@@ -98,4 +117,45 @@ void GameObject::applyDamage(int value) {
 
 bool GameObject::getIsAlive() {
     return(health > 0);
+}
+
+//serialization-----------------------------------
+void GameObject::serialize(ofstream& out) const {
+    out.write(reinterpret_cast<const char*>(&worldPos), sizeof(worldPos));
+    out.write(reinterpret_cast<const char*>(&screenPos), sizeof(screenPos));
+    //out.write(reinterpret_cast<const char*>(&Spritefilename), sizeof(Spritefilename));
+    out.write(reinterpret_cast<const char*>(&ProjSpeed), sizeof(ProjSpeed));
+    out.write(reinterpret_cast<const char*>(&shootingRange), sizeof(shootingRange));
+    out.write(reinterpret_cast<const char*>(&health), sizeof(health));
+    out.write(reinterpret_cast<const char*>(&maxHealth), sizeof(maxHealth));
+    out.write(reinterpret_cast<const char*>(&speed), sizeof(speed));
+    out.write(reinterpret_cast<const char*>(&ifStartFlicker), sizeof(ifStartFlicker));
+    out.write(reinterpret_cast<const char*>(&flickerDuration), sizeof(flickerDuration));
+    out.write(reinterpret_cast<const char*>(&flickerTimer), sizeof(flickerTimer));
+
+    // serialize std::string
+    size_t length = Spritefilename.size();
+    out.write(reinterpret_cast<const char*>(&length), sizeof(length));
+    out.write(Spritefilename.data(), length);
+   // ProjsManager projs; ------------------------------
+}
+
+void GameObject::deserialize(ifstream& in) {
+    in.read(reinterpret_cast<char*>(&worldPos), sizeof(worldPos));
+    in.read(reinterpret_cast<char*>(&screenPos), sizeof(screenPos));
+    //in.read(reinterpret_cast<char*>(&Spritefilename), sizeof(Spritefilename));
+    in.read(reinterpret_cast<char*>(&ProjSpeed), sizeof(ProjSpeed));
+    in.read(reinterpret_cast<char*>(&shootingRange), sizeof(shootingRange));
+    in.read(reinterpret_cast<char*>(&health), sizeof(health));
+    in.read(reinterpret_cast<char*>(&maxHealth), sizeof(maxHealth));
+    in.read(reinterpret_cast<char*>(&speed), sizeof(speed));
+    in.read(reinterpret_cast<char*>(&ifStartFlicker), sizeof(ifStartFlicker));
+    in.read(reinterpret_cast<char*>(&flickerDuration), sizeof(flickerDuration));
+    in.read(reinterpret_cast<char*>(&flickerTimer), sizeof(flickerTimer));
+
+    // deserialize std::string
+    size_t length;
+    in.read(reinterpret_cast<char*>(&length), sizeof(length));
+    Spritefilename.resize(length);
+    in.read(&Spritefilename[0], length);
 }

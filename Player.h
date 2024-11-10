@@ -16,6 +16,7 @@ private:
 
 public:
     Player(int _x, int _y, std::string filename);
+    Player& operator=(const Player& other);
     bool getIfApplyAOE() {
         return ifApplyAOE;
     }
@@ -24,6 +25,10 @@ public:
     }
     void updateMovementAnim(std::string name); //update player walking animation 
     void update(float dt, GamesEngineeringBase::Window& canvas, World& world, Camera& cam);
+
+    //serialization------------------------------------
+    void serialize(ofstream& out) const;
+    void deserialize(ifstream& in);
 };
 
 #endif // PLAYER_H

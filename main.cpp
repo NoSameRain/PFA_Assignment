@@ -4,10 +4,8 @@
 #include "Camera.h"
 #include "Player.h"
 #include "World.h"
-#include "Tile.h"
-#include "Tileset.h"
 #include "NPCmanager.h"
-#include "ProjsManager.h"
+#include "GameState.h"
 
 using namespace std;
 using namespace GamesEngineeringBase;
@@ -19,7 +17,7 @@ void getFPS(const float& dt) {
     timeElapsed += dt;
     // output FPS every one second
     if (timeElapsed > 1.f) {
-        //cout << "FPS is : " << fps << endl;
+        cout << "FPS is : " << fps << endl;
         timeElapsed = 0.f;
     }
 }
@@ -33,7 +31,8 @@ int main() {
     Camera camera(canvas);
     World world(canvas);
     NPCmanager npcs;
-    ProjsManager p;
+
+    GameState gamestate(hero, camera, world, npcs);
 
     bool running = true; 
     bool playerStartsAttack = false;
@@ -47,6 +46,7 @@ int main() {
         canvas.clear();
 
         float dt = timer.dt();
+
         // output FPS once per second
         getFPS(dt);
 
@@ -95,7 +95,14 @@ int main() {
                 ifStartCooldown = false;
             }
         }
-        //cout << timeElapsed_cooldown << endl;
+
+        // -----------------save and load game state--------------------
+        if (canvas.keyPressed('O')) {
+            gamestate.saveState();
+        }
+        if (canvas.keyPressed('L')) {
+            gamestate.loadState(hero, camera, world, npcs);
+        }
 
 // ---------------------- Draw -------------------------------------------------------
         // draw map---------------------------------
@@ -116,6 +123,5 @@ int main() {
 
         canvas.present();
     }
-
     return 0;
 }

@@ -2,17 +2,28 @@
 #include "World.h"
 #include "Constants.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 using namespace GamesEngineeringBase;
 
 Player::Player(int _x, int _y, string filename) {
-    sprite.load(filename);
+    Spritefilename = filename;
+    sprite.load(Spritefilename);
     worldPos.x = _x ;
     worldPos.y = _y ;
     speed = 220.f;
     ProjSpeed = 400.f; // speed of player's projectiles
     shootingRange = linearAttackRange; // range of player launch projectiles, as linear attack
+}
+
+Player& Player::operator=(const Player& other) {
+    if (this == &other) {
+        return *this; // Handle self-assignment
+    }
+    GameObject::operator=(other); // copy base class member
+    timeElapsed_anim = other.timeElapsed_anim;
+    ifApplyAOE = other.ifApplyAOE;
 }
 
 void Player::updateMovementAnim(string name) {
@@ -73,4 +84,25 @@ void Player::update(float dt, Window& canvas, World& world, Camera& cam) {
 
     // checks if the flicker effect should stop based on elapsed time 
     updateFlickerState(dt);
+}
+
+//serialization-----------------------------------------
+void Player::serialize(ofstream& out) const {
+    // Call base class method
+    GameObject::serialize(out); 
+
+    // specific method for Player 
+    out.write(reinterpret_cast<const char*>(&timeElapsed_anim), sizeof(timeElapsed_anim));
+    out.write(reinterpret_cast<const char*>(&ifApplyAOE), sizeof(ifApplyAOE));
+
+    // ProjsManager projs; ------------------------------
+}
+
+void Player::deserialize(ifstream& in) {
+    // Call base class method
+    GameObject::deserialize(in);
+
+    // specific method for Player
+    in.read(reinterpret_cast<char*>(&timeElapsed_anim), sizeof(timeElapsed_anim));
+    in.read(reinterpret_cast<char*>(&ifApplyAOE), sizeof(ifApplyAOE));
 }

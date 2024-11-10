@@ -2,11 +2,13 @@
 #include "Constants.h"
 #include "math.h"
 #include <iostream>
+#include <fstream>
 using namespace std;
 using namespace GamesEngineeringBase;
 
 NPC::NPC(Vec2 _pos, string filename, int _maxHealth, float _speed) {
-    sprite.load(filename);
+    Spritefilename = filename;
+    sprite.load(Spritefilename);
     worldPos.x = _pos.x;
     worldPos.y = _pos.y;
     maxHealth = _maxHealth;
@@ -14,6 +16,21 @@ NPC::NPC(Vec2 _pos, string filename, int _maxHealth, float _speed) {
     speed = _speed;
     ProjSpeed = 280.f; // speed of NPC's projectiles
     shootingRange = aggroRange + 80; // range of NPC launch projectiles 
+}
+
+NPC::NPC(const NPC& other) {
+    NPCPlayerDistance = other.NPCPlayerDistance;
+    isAggroActive = other.isAggroActive;
+    sprite.load(Spritefilename); //
+}
+
+NPC& NPC::operator=(const NPC& other) {
+    if (this == &other) {
+        return *this; // Handle self-assignment
+    }
+    GameObject::operator=(other); // copy base class member
+    NPCPlayerDistance = other.NPCPlayerDistance;
+    isAggroActive = other.isAggroActive;
 }
 
 int NPC::getNPCPlayerDistance() const {
@@ -66,5 +83,26 @@ bool NPC::checkCollision(Vec2 playerPos) {
 
 bool NPC::getIsAggroActive() {
     return isAggroActive;
+}
+
+//serialization-----------------------------------------
+void NPC::serialize(ofstream& out) const {
+    // Call base class method
+    GameObject::serialize(out);
+
+    // specific method for Player
+    out.write(reinterpret_cast<const char*>(&NPCPlayerDistance), sizeof(NPCPlayerDistance));
+    out.write(reinterpret_cast<const char*>(&isAggroActive), sizeof(isAggroActive));
+
+    // ProjsManager projs; ------------------------------
+}
+
+void NPC::deserialize(ifstream& in) {
+    // Call base class method
+    GameObject::deserialize(in);
+
+    // specific method for Player
+    in.read(reinterpret_cast<char*>(&NPCPlayerDistance), sizeof(NPCPlayerDistance));
+    in.read(reinterpret_cast<char*>(&isAggroActive), sizeof(isAggroActive));
 }
 

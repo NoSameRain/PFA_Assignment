@@ -131,6 +131,7 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GamesEngineeringBase.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="NPCmanager.h" />
     <ClInclude Include="Player.h" />
@@ -145,6 +146,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Constants.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="NPCmanager.cpp" />

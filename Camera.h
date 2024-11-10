@@ -21,6 +21,9 @@ public:
     Vec2 getCameraPos(); // return camera position
     void update(const Vec2& playerPos); // update camera position based on player position
     Vec2 worldToScreen(const Vec2& objPosition) const; // convert the object's position from world system to camera system 
+    //serialization------------------------------------
+    void serialize(std::ofstream& out) const;
+    void deserialize(std::ifstream& in);
 };
 
 #endif

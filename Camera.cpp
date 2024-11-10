@@ -2,6 +2,7 @@
 #include "Constants.h"
 #include "Utils.h"  
 #include "GamesEngineeringBase.h"
+#include <fstream>
 
 using namespace std;
 using namespace GamesEngineeringBase;
@@ -35,4 +36,13 @@ Vec2 Camera::worldToScreen(const Vec2& objPosition) const {
     v.x = objPosition.x - position.x;
     v.y = objPosition.y - position.y;
     return v;
+}
+
+//serialization-----------------------------------------
+void Camera::serialize(ofstream& out) const {
+    out.write(reinterpret_cast<const char*>(&position), sizeof(position));
+}
+
+void Camera::deserialize(ifstream& in) {
+    in.read(reinterpret_cast<char*>(&position), sizeof(position));
 }

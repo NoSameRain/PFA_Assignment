@@ -1,5 +1,6 @@
 #include "NPCmanager.h"
 #include <iostream>
+#include <fstream>
 using namespace std;
 using namespace GamesEngineeringBase;
 
@@ -9,6 +10,38 @@ NPCmanager::~NPCmanager() {
     for (int i = 0; i < currentSize; i++) {
         delete npc_array[i];
     }
+}
+
+NPCmanager& NPCmanager::operator=(const NPCmanager& other) {
+    if (this == &other) {
+        return *this; // Handle self-assignment
+    }
+    
+    // Copy simple data members
+    currentSize = other.currentSize;
+    timeElapsed = other.timeElapsed;
+
+    // Delete existing NPCs in npc_array to prevent memory leaks
+    for (int i = 0; i < maxNpcSize; ++i) {
+        delete npc_array[i];
+        npc_array[i] = nullptr;
+    }
+
+    // deep copy of the npc_array
+    for (int i = 0; i < maxNpcSize; ++i) {
+        if (other.npc_array[i] != nullptr) {
+            npc_array[i] = new NPC(*other.npc_array[i]); // use NPC's copy constructor
+            cout << "test " << endl;
+        }
+        else npc_array[i] = nullptr; // ensure null pointers are copied properly
+    }
+
+    // copy the sort_health_array 
+    for (int i = 0; i < maxNpcSize; ++i) {
+        sort_health_array[i] = other.sort_health_array[i];
+    }
+
+    return *this;
 }
 
 //it might be quick when map size super larger than camera view
@@ -105,7 +138,7 @@ void NPCmanager::update(float& dt, Vec2& playerPos, Camera& camera) {
             // if NPC's alive state is false, delete it
             checkDeleteNPC(i);
         }
-        else sort_health_array[i].y = -1;
+        else sort_health_array[i].y = 0;
 
     }
 }
@@ -229,10 +262,10 @@ void NPCmanager::attackTopFiveHealthNPC() {
 
     int cnt = 0;
     // for test: output all the sorted health value
-    cout << "health of all the NPCs generated currently: ";
-    for (int i = 0; i < currentSize; i++) cout << sort_health_array[i].y << " ";
-    cout << endl;
-    cout << "health of NPCs inside AOE range: ";
+    //cout << "health of all the NPCs generated currently: ";
+    //for (int i = 0; i < currentSize; i++) cout << sort_health_array[i].y << " ";
+    //cout << endl;
+    //cout << "health of NPCs inside AOE range: ";
     for (int i = 0; i < currentSize; i++) {
         int index = sort_health_array[i].x;
         if (cnt < 5 && npc_array[index] != nullptr) {
@@ -243,11 +276,48 @@ void NPCmanager::attackTopFiveHealthNPC() {
                 // the NPC hit by AOE attack would flicker green to indicate damage taken
                 npc_array[index]->setIfStartFlicker(2);
                 cnt++;
-                cout << sort_health_array[i].y << " ";
+                //cout << sort_health_array[i].y << " ";
             }
+        }    
+    }
+    //cout << endl;
+}
+//serialization-----------------------------------------
+void NPCmanager::serialize(ofstream& out) const {
+    
+    out.write(reinterpret_cast<const char*>(&currentSize), sizeof(currentSize));
+
+    for (int i = 0; i < currentSize; i++) {
+        bool hasNPC = (npc_array[i] != nullptr);
+        out.write(reinterpret_cast<const char*>(&hasNPC), sizeof(hasNPC));
+        if (hasNPC) {
+            npc_array[i]->serialize(out);
+            //cout << "write: " << npc_array[i]->getSpriteName() << endl;
+            //std::cout << "npc write : " << npc_array[i]->getHealth() << std::endl;
         }
             
     }
-    cout << endl;
+    out.write(reinterpret_cast<const char*>(&timeElapsed), sizeof(timeElapsed));
+    out.write(reinterpret_cast<const char*>(&sort_health_array), sizeof(sort_health_array));
+    
+}
 
+void NPCmanager::deserialize(ifstream& in) {
+
+    in.read(reinterpret_cast<char*>(&currentSize), sizeof(currentSize));
+
+    for (int i = 0; i < currentSize; i++) {
+        bool hasNPC;
+        in.read(reinterpret_cast<char*>(&hasNPC), sizeof(hasNPC));
+        if (hasNPC) {
+            npc_array[i] = new NPC();
+            npc_array[i]->deserialize(in);
+            //cout << "read: "<<npc_array[i]->getSpriteName() << endl;
+            npc_array[i]->setSprite();
+            //std::cout << "npc read: " << npc_array[i]->getHealth() << std::endl;
+        }
+    }
+
+    in.read(reinterpret_cast<char*>(&timeElapsed), sizeof(timeElapsed));
+    in.read(reinterpret_cast<char*>(&sort_health_array), maxNpcSize * sizeof(Vec2));
 }
