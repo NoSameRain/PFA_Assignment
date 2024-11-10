@@ -1,4 +1,5 @@
 #include "GameState.h"
+#include "Constants.h"
 #include <iostream>
 //using namespace std;
 
@@ -10,6 +11,7 @@ void GameState::saveState() {
         npcs.serialize(outfile);
         outfile.write(reinterpret_cast<const char*>(&timeElapsed_cooldown), sizeof(timeElapsed_cooldown));
         outfile.write(reinterpret_cast<const char*>(&ifStartCooldown), sizeof(ifStartCooldown));
+        outfile.write(reinterpret_cast<const char*>(&scores), sizeof(scores));
         outfile.close();
         cout << "game saved succesfully!" << endl;
     }
@@ -27,6 +29,7 @@ void GameState::loadState(Player& _hero, Camera& _camera, World& _world, NPCmana
         npcs.deserialize(infile);
         infile.read(reinterpret_cast<char*>(&timeElapsed_cooldown), sizeof(timeElapsed_cooldown));
         infile.read(reinterpret_cast<char*>(&ifStartCooldown), sizeof(ifStartCooldown));
+        infile.read(reinterpret_cast<char*>(&scores), sizeof(scores));
         infile.close();
         cout << "game loaded succesfully!" << endl;
         _hero = hero;

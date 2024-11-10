@@ -9,7 +9,7 @@
 #include "Utils.h"
 
 class NPCmanager{
-    static const int maxNpcSize = 40;
+    static const int maxNpcSize = 50;
     // npc_array: Array to store pointers to NPC objects                  
     NPC* npc_array[maxNpcSize] = { nullptr };
     // sort_health_array: Array to store NPC health and positions for                    

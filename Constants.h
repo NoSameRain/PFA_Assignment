@@ -31,4 +31,6 @@ extern const Vec3 NPCFlickerColor;
 extern const int NPCprojWidth ;
 extern const int playerProjWidth;
 
+extern int scores;
+
 #endif // CONSTANTS_H

@@ -1,4 +1,5 @@
 #include "NPCmanager.h"
+#include "Constants.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -31,7 +32,6 @@ NPCmanager& NPCmanager::operator=(const NPCmanager& other) {
     for (int i = 0; i < maxNpcSize; ++i) {
         if (other.npc_array[i] != nullptr) {
             npc_array[i] = new NPC(*other.npc_array[i]); // use NPC's copy constructor
-            cout << "test " << endl;
         }
         else npc_array[i] = nullptr; // ensure null pointers are copied properly
     }
@@ -119,9 +119,11 @@ void NPCmanager::generateNPC(Camera& camera, float& dt) {
 void NPCmanager::checkDeleteNPC(unsigned int i) {
     if (!npc_array[i]->getIsAlive()) { //dead
         NPC* _npc = npc_array[i];
+        scores += npc_array[i]->getMaxHealth()/10;
         npc_array[i] = nullptr;
         delete _npc;
-        cout << "kILLED NPC: " << i << endl;
+         
+        cout << "SCORE : " << scores << "      kILLED enemy No." << i << endl;
     }
 }
 
@@ -293,7 +295,6 @@ void NPCmanager::serialize(ofstream& out) const {
         if (hasNPC) {
             npc_array[i]->serialize(out);
             //cout << "write: " << npc_array[i]->getSpriteName() << endl;
-            //std::cout << "npc write : " << npc_array[i]->getHealth() << std::endl;
         }
             
     }
@@ -314,7 +315,6 @@ void NPCmanager::deserialize(ifstream& in) {
             npc_array[i]->deserialize(in);
             //cout << "read: "<<npc_array[i]->getSpriteName() << endl;
             npc_array[i]->setSprite();
-            //std::cout << "npc read: " << npc_array[i]->getHealth() << std::endl;
         }
     }
 
