@@ -134,7 +134,7 @@
     <ClInclude Include="NPC.h" />
     <ClInclude Include="NPCmanager.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Projectiles.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="ProjsManager.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Tileset.h" />
@@ -148,7 +148,7 @@
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="NPCmanager.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Projectiles.cpp" />
+    <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ProjsManager.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Tileset.cpp" />

@@ -2,14 +2,14 @@
 #ifndef PROJSMANAGER_H
 #define PROJSMANAGER_H
 
-#include "Projectiles.h"
+#include "Projectile.h"
 #include "Utils.h"
 #include "GamesEngineeringBase.h"
 
 class ProjsManager {
 private:
 	static const int maxProjSize = 10000;
-	Projectiles* projs[maxProjSize] = { nullptr };
+	Projectile* projs[maxProjSize] = { nullptr };
 	int currentSize = 0;
 	float timeElapsed = 0.f;
 	float timeThreshold = 1.f; //cooldown time for launching projectiles

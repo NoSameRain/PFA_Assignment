@@ -1,9 +1,9 @@
-﻿#include "Projectiles.h"
+﻿#include "Projectile.h"
 #include<iostream>
 using namespace GamesEngineeringBase;
 using namespace std;
 
-Projectiles::Projectiles(Vec2 _worldPos, Vec2 _target, float _speed, int _shootingRange) {
+Projectile::Projectile(Vec2 _worldPos, Vec2 _target, float _speed, int _shootingRange) {
     worldPos = _worldPos;
 	speed = _speed;
     targetPos = _target;
@@ -16,10 +16,10 @@ Projectiles::Projectiles(Vec2 _worldPos, Vec2 _target, float _speed, int _shooti
     stopPos.y = static_cast<int>(shootingRange * (targetPos.y - worldPos.y) / projTargetDistance) + worldPos.y;
 }
 
-Projectiles::~Projectiles() {}
+Projectile::~Projectile() {}
 
 //when call this function, player/NPC has entered aggroRange
-void Projectiles::update(float dt, Camera& cam) {
+void Projectile::update(float dt, Camera& cam) {
     int move = static_cast<int>(speed * dt);
     int distance = static_cast<int>(sqrt(pow(worldPos.x - stopPos.x, 2) + pow(worldPos.y - stopPos.y, 2)));
     
@@ -37,7 +37,7 @@ void Projectiles::update(float dt, Camera& cam) {
     }
 }
 
-void Projectiles::draw(Window& canvas, int projSize, Vec3 color) {
+void Projectile::draw(Window& canvas, int projSize, Vec3 color) {
     for(int i = 0; i < projSize; i++)
         for (int j = 0; j < projSize; j++) {
             if (screenPos.x + i >= 0 && screenPos.x + i < canvas.getWidth() &&
@@ -46,7 +46,7 @@ void Projectiles::draw(Window& canvas, int projSize, Vec3 color) {
         }
 }
 
-bool Projectiles::checkCollision(Vec2 pos, int spriteSize) {
+bool Projectile::checkCollision(Vec2 pos, int spriteSize) {
     int s = spriteSize / 2;
     // Check if the projectile's world position is within the bounds of the NPC's/Player's sprite area
     // If so, a collision is detected and the function returns true
@@ -58,10 +58,10 @@ bool Projectiles::checkCollision(Vec2 pos, int spriteSize) {
     return false;
 }
 
-bool Projectiles::getIsAlive() {
+bool Projectile::getIsAlive() {
     return isAlive;
 }
 
-bool Projectiles::getIsCollided() {
+bool Projectile::getIsCollided() {
     return isCollided;
 }

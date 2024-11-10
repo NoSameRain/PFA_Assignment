@@ -45,7 +45,7 @@
     <ClInclude Include="NPCmanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Projectiles.h">
+    <ClInclude Include="Projectile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProjsManager.h">
@@ -80,7 +80,7 @@
     <ClCompile Include="NPCmanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Projectiles.cpp">
+    <ClCompile Include="Projectile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProjsManager.cpp">

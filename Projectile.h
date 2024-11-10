@@ -1,13 +1,13 @@
 #pragma once
-#ifndef PROJECTILES_H
-#define PROJECTILES_H
+#ifndef PROJECTILE_H
+#define PROJECTILE_H
 
 #include "Utils.h"
 #include "Camera.h"
 #include "GamesEngineeringBase.h"
 #include "Constants.h"
 
-class Projectiles{
+class Projectile{
 private:
 	Vec2 worldPos; // the projectile starts at the position of the entity(NPC/player) that fires it.
 	Vec2 screenPos; // the postion used to render projectile in camera coordinates
@@ -21,8 +21,8 @@ private:
 	bool isCollided = false; //if projectile hits the player/NPC
 	bool isAlive = true; //when isAlive == false,delete the projectile
 public:
-	Projectiles(Vec2 _worldPos, Vec2 _target, float _speed, int _shootingRange);
-	~Projectiles();
+	Projectile(Vec2 _worldPos, Vec2 _target, float _speed, int _shootingRange);
+	~Projectile();
 	void update(float dt, Camera& cam);
 	void draw(GamesEngineeringBase::Window& canvas, int projSize, Vec3 color);
 	bool checkCollision(Vec2 pos, int spriteSize); 

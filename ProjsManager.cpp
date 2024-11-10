@@ -15,7 +15,7 @@ void ProjsManager::generateProjs(float dt, Vec2 worldPos, Vec2 target, float spe
     timeElapsed += dt;
     if (currentSize < maxProjSize) {
         if (timeElapsed > timeThreshold) {
-            Projectiles* proj = new Projectiles(worldPos, target, speed, shootingRange);
+            Projectile* proj = new Projectile(worldPos, target, speed, shootingRange);
             projs[currentSize++] = proj;
             timeElapsed = 0.f;
             //cout << "player" << worldPos.x << " " << worldPos.y << endl;
@@ -26,7 +26,7 @@ void ProjsManager::generateProjs(float dt, Vec2 worldPos, Vec2 target, float spe
 // delete the projectile which's isAlive == false
 void ProjsManager::checkDeleteProj(unsigned int i) {
     if (!projs[i]->getIsAlive()) { //dead
-        Projectiles* _p = projs[i];
+        Projectile* _p = projs[i];
         projs[i] = nullptr;
         delete _p;
         //cout << "delete projctile: " << i << endl;
