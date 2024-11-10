@@ -9,4 +9,6 @@ struct Vec3 {
     int x, y, z;
 };
 
+
+
 #endif // UTILS_H

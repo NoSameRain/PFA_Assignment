@@ -13,6 +13,7 @@ private:
 	bool isAggroActive = false;
 public:
 	NPC(Vec2 _pos,std::string filename,int _maxHealth,float _speed);
+	int getHealth() const;
 	int getNPCPlayerDistance() const;
 	int getSpeed()const;
 	void update(float dt, Vec2& playerPos, Camera& cam);

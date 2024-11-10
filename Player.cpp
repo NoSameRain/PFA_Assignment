@@ -31,6 +31,7 @@ void Player::update(float dt, Window& canvas, World& world, Camera& cam) {
     int moveY = 0;
 
     timeElapsed_anim += dt;
+
     if (canvas.keyPressed('W')) {
         updateMovementAnim("up");
         moveY -= move;
@@ -50,7 +51,8 @@ void Player::update(float dt, Window& canvas, World& world, Camera& cam) {
         moveX += move;
     }
     // apply AOE attack
-    if (canvas.keyPressed('Q')) {
+    // only when it is not in cooldown time, press 'Q' can take effect
+    if (canvas.keyPressed('Q') && !ifStartCooldown) {
         ifApplyAOE = true;
         //cout << "AOE applied" << endl;
     }
@@ -72,15 +74,3 @@ void Player::update(float dt, Window& canvas, World& world, Camera& cam) {
     // checks if the flicker effect should stop based on elapsed time 
     updateFlickerState(dt);
 }
-
-//void Player::applyAOE() {
-
-//}
-
-//bool Player::checkCollision(NPC& p) {
-//    int x2 = (worldPos.x - p.worldPos.x) * (worldPos.x - p.worldPos.x);
-//    int y2 = (worldPos.y - p.worldPos.y) * (worldPos.y - p.worldPos.y);
-//    float r = sqrtf(x2 + y2);
-//    float n = static_cast<float>(2 * playerSpriteSize / 3);
-//    return(r < n);
-//}

@@ -43,10 +43,13 @@ Vec2 NPCmanager::generateStartPos(Camera& camera) {
 }
 
 void NPCmanager::generateNPC(Camera& camera, float& dt) {
+    // generate 4 types NPC with random start position, sprite, health and speed
+    // generate in an increasing frequency
     timeElapsed += dt;
-    if (currentSize < maxNpcSize) {
+    if (currentSize < maxNpcSize) { // max NPC number is 40
         if (timeElapsed > timeThreshold) {
             Vec2 pos = generateStartPos(camera);
+            // choose one type of NPC from 4 types randomly
             int NPCtypeIndex = rand() % 4;
             int health = 0;
             float speed = 0.f;
@@ -69,14 +72,14 @@ void NPCmanager::generateNPC(Camera& camera, float& dt) {
                 speed = 250.f;
                 break;
             }
-
+            // add new NPC pointer to array
             NPC* _npc = new NPC(pos, filename,health,speed);
-            //cout << "Created: " << currentSize << '\t' << timeThreshold << '\t' << dt << endl;
-
             npc_array[currentSize++] = _npc;
             timeElapsed = 0.f;
+            // frequency of generation increases over time, as time threshold reduces
             timeThreshold -= 0.1f;
-            timeThreshold = max(0.3f, timeThreshold); //threshold keep reducing till it is 0.2f 
+            //threshold keep reducing till it is 0.3f
+            timeThreshold = max(0.3f, timeThreshold); 
         }
     }
 }
@@ -90,37 +93,47 @@ void NPCmanager::checkDeleteNPC(unsigned int i) {
 }
 
 void NPCmanager::update(float& dt, Vec2& playerPos, Camera& camera) {
+    //generate random NPC outside camera view
     generateNPC(camera, dt);
+
     for (int i = 0; i < currentSize; i++) {
+        sort_health_array[i].x = i;
         if (npc_array[i] != nullptr) {
             npc_array[i]->update(dt, playerPos, camera);
+            // store npc index and health in this array to sort top five health NPC 
+            sort_health_array[i].y = npc_array[i]->getHealth();
+            // if NPC's alive state is false, delete it
             checkDeleteNPC(i);
         }
+        else sort_health_array[i].y = -1;
+
     }
 }
 
 void NPCmanager::draw(Window& canvas) {
     for (int i = 0; i < currentSize; i++) {
         if (npc_array[i] != nullptr) {
-            npc_array[i]->draw(canvas);
-            npc_array[i]->drawHealthBar(canvas);
-            npc_array[i]->drawFlicker(canvas, NPCFlickerColor);
+            npc_array[i]->draw(canvas); // draw each NPC
+            npc_array[i]->drawHealthBar(canvas); // draw each NPC's health bar
+            npc_array[i]->drawFlicker(canvas, NPCFlickerColor); // draw each NPC's flicker effect
         }
     }
 }
 
+// if NPC collides with player, player will flicker as red color
 // called in main game loop; if true, affect player flickering
 // (more complex behaviors : if true, NPCs moving back)
 void NPCmanager::checkNPCPlayerCollision(Player& player) {
     for (int i = 0; i < currentSize; i++) {
         if (npc_array[i] != nullptr) {
             if (npc_array[i]->checkCollision(player.getWorldPos())) {
-                player.setIfStartFlicker(true);
+                player.setIfStartFlicker(1);
             }
         }
     }
 }
 
+// generate & update projectiles for those NPC(shooter) whose speed is 0
 void NPCmanager::setProjectiles(float dt, GameObject& obj, Camera& camera) {
     for (int i = 0; i < currentSize; i++) {
         if (npc_array[i] != nullptr && npc_array[i]->getSpeed() == 0.f && npc_array[i]->getIsAggroActive()) {
@@ -128,7 +141,7 @@ void NPCmanager::setProjectiles(float dt, GameObject& obj, Camera& camera) {
         }
     }
 }
-
+// draw projectiles for those NPC(shooter) whose speed is 0
 void NPCmanager::drawProjectiles(Window& canvas) {
     for (int i = 0; i < currentSize; i++) {
         if (npc_array[i] != nullptr && npc_array[i]->getSpeed() == 0.f && npc_array[i]->getIsAggroActive()) {
@@ -146,7 +159,12 @@ bool NPCmanager::getIfNPCinPlayerAttackRange() {
     }
     return false;
 }
-
+void swap(Vec2& a, Vec2& b) {
+    Vec2 tmp = a;
+    a = b;
+    b = tmp;
+}
+// return NPC pointer , which is closest to player, to trigger player's linear attack
 NPC* const NPCmanager::getClosestNPCtoPlayer() {
     int min = 1000;
     int index = -1;
@@ -163,4 +181,47 @@ NPC* const NPCmanager::getClosestNPCtoPlayer() {
         return nullptr;
     }
     return npc_array[index];
+}
+
+//
+void QuickSortByHealth(Vec2* arr, int begin, int end)
+{
+    if (begin >= end) return;
+    int left = begin;
+    int right = end;
+    int key = begin;
+    while (begin < end)
+    {
+        while (arr[end].y <= arr[key].y && begin < end) end--;
+        while (arr[begin].y >= arr[key].y && begin < end) begin++;
+        swap(arr[begin], arr[end]);
+    }
+    swap(arr[key], arr[end]);
+    key = end;
+    QuickSortByHealth(arr, left, key - 1);
+    QuickSortByHealth(arr, key + 1, right);
+}
+
+
+void NPCmanager::attackTopFiveHealthNPC() {
+    // Vec2 sort_health_array[40]: each element is a Vec2{x,y} object
+    // x: stores NPC* npc_array index
+    // y: stores corresponding health value
+    QuickSortByHealth(sort_health_array, 0, 39);
+    int cnt = 0;
+    for (int i = 0; i < currentSize; i++) {
+        //cout << sort_health_array[i].y << " " ;
+        int index = sort_health_array[i].x;
+        if (cnt < 5 && npc_array[index] != nullptr) {
+            if (npc_array[index]->getNPCPlayerDistance() < AOEAttackRange) {
+                npc_array[index]->applyDamage(AOEDamage);
+                npc_array[index]->setIfStartFlicker(2);
+                cnt++;
+                //cout <<"health: " << sort_health_array[i].y << " ";
+            }
+        }
+            
+    }
+    cout << endl;
+
 }

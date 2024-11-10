@@ -19,8 +19,11 @@ protected:
 	int health=1000; // Initial health level of the object; decreases when the object is attacked
 	int maxHealth=1000; // Initial health level of the object, won't decrease
 	float speed=0.f;
-
-	bool ifStartFlicker = false; // Indicates if object should start flickering (e.g., upon being hit)
+	// Indicates if object should start flickering (e.g., upon being hit)
+	// ifStartFlicker == 0 don't flicker
+	// ifStartFlicker == 1 flicker
+	// ifStartFlicker == 2 flicker as green color, set when hit by AOE attack
+	unsigned int ifStartFlicker = 0; 
 	float flickerDuration = 0.2f; // total duration for flicker effect
 	float flickerTimer = 0.0f; // track current elapsed time for flicker effect
 public:
@@ -30,7 +33,7 @@ public:
 	int getSpriteSize() const {
 		return sprite.width;
 	}
-	void setIfStartFlicker(bool flag) { //set the flag to start or stop flicker effect
+	void setIfStartFlicker(int flag) { //set the flag to start or stop flicker effect
 		ifStartFlicker = flag;
 	}
 	// update function--------------------------------------------------------

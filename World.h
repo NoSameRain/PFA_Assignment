@@ -13,6 +13,7 @@ private:
     int tileNumX = 33; //draw up to 32+1 tiles
     int tileNumY = 25; //draw up to 24+1 tiles
     Tileset tileset;
+    static const int tileType = 26;
     Tile tiles[tileType]; //store 26 diff tile objects
 
 public:

@@ -10,7 +10,12 @@
 
 class NPCmanager{
     static const int maxNpcSize = 40;
+    // Array to store pointers to NPC objects                  
     NPC* npc_array[maxNpcSize] = { nullptr };
+    // Array to store NPC health and positions for                    
+    // identifying the top 5 healthiest NPCs by index in npc_array
+    // for each Vec2{x,y} object: x = index, y = health                                       
+    Vec2 sort_health_array[maxNpcSize];                               
     int currentSize = 0;
     float timeElapsed = 0.f;
     float timeThreshold = 3.f;
@@ -28,6 +33,7 @@ public:
 
     bool getIfNPCinPlayerAttackRange();
     NPC* const getClosestNPCtoPlayer();
+    void attackTopFiveHealthNPC();
 };
 
 #endif

@@ -24,6 +24,10 @@ int NPC::getSpeed() const {
     return speed;
 }
 
+int NPC::getHealth() const {
+    return health;
+}
+
 void NPC::update(float dt, Vec2& playerPos, Camera& cam) {
     int move = static_cast<int>(speed * dt);
     NPCPlayerDistance = static_cast<int>(sqrt(pow(worldPos.x - playerPos.x, 2) + pow(worldPos.y - playerPos.y, 2)));

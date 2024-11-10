@@ -19,7 +19,7 @@ void getFPS(const float& dt) {
     timeElapsed += dt;
     // output FPS every one second
     if (timeElapsed > 1.f) {
-        cout << "FPS is : " << fps << endl;
+        //cout << "FPS is : " << fps << endl;
         timeElapsed = 0.f;
     }
 }
@@ -65,11 +65,14 @@ int main() {
 
         // check collision between each NPC and player
         npcs.checkNPCPlayerCollision(hero);
-        
-        // ----------------Player Attack------------------------
-        if (hero.getIfApplyAOE()) {  
-            // AOE attack---------------
 
+        // ----------------Player Attack------------------------
+        if (hero.getIfApplyAOE() && !ifStartCooldown) {
+            // AOE attack---------------
+            npcs.attackTopFiveHealthNPC();
+            hero.setAOE(false);
+            // after player used AOE, start to cool down AOE
+            ifStartCooldown = true;
         }
         else{ 
             // linear attack------------
@@ -83,6 +86,16 @@ int main() {
                 hero.updateProjectiles(dt, *closestNPC, camera);
             }
         }
+        // when AOE cooldown time is over
+        // allow player to use AOE by setting ifStartCooldown = false
+        if (ifStartCooldown) {
+            timeElapsed_cooldown += dt;
+            if (timeElapsed_cooldown > timeThreshold_cooldown) {
+                timeElapsed_cooldown = 0.f;
+                ifStartCooldown = false;
+            }
+        }
+        //cout << timeElapsed_cooldown << endl;
 
 // ---------------------- Draw -------------------------------------------------------
         // draw map---------------------------------
@@ -100,7 +113,6 @@ int main() {
         npcs.draw(canvas);
         // draw NPC's projectile if it's speed is zero
         npcs.drawProjectiles(canvas);
-
 
         canvas.present();
     }

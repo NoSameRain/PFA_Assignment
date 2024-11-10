@@ -2,31 +2,33 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 #include"Utils.h"
-const unsigned int mapWidth = 1344;
-const unsigned int mapHeight = 1344;
+extern const unsigned int mapWidth ;
+extern const unsigned int mapHeight;
 
-const unsigned int tileWidthHeight = 32; //each tile png is 32*32 pixel
+extern const unsigned int tileWidthHeight; //each tile png is 32*32 pixel
 
-const unsigned int playerSpriteSize = 48; //player png size is 48*48
-const unsigned int npcSpriteSize = 32;
+extern const unsigned int playerSpriteSize; //player png size is 48*48
+extern const unsigned int npcSpriteSize;
 
-const unsigned int tileType = 26; //26 diff tile
-const int aggroRange = 500;
-const int stopAggroDistance = 72;
+extern const int aggroRange;
+extern const int stopAggroDistance ;
 
-const int linearAttackRange = 150;
-const int AOEAttackRange = 250;
+extern const int linearAttackRange;
+extern const int AOEAttackRange ;
 
-const int linearDamage = 60;
-const int AOEDamage = 30;
+extern const int linearDamage;
+extern const int AOEDamage;
 
+extern const float timeThreshold_cooldown;
+extern float timeElapsed_cooldown;
+extern bool ifStartCooldown;
 
-const Vec3 NPCprojColor = { 1,1,255 };
-const Vec3 playerProjColor = { 1,255,1 };
-const Vec3 playerFlickerColor = { 255,1,1 };
-const Vec3 NPCFlickerColor = { 255,255,255 };
+extern const Vec3 NPCprojColor;
+extern const Vec3 playerProjColor ;
+extern const Vec3 playerFlickerColor;
+extern const Vec3 NPCFlickerColor;
 
-const int NPCprojWidth = 6;
-const int playerProjWidth = 8;
+extern const int NPCprojWidth ;
+extern const int playerProjWidth;
 
 #endif // CONSTANTS_H

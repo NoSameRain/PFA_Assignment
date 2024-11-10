@@ -15,13 +15,14 @@ void GameObject::draw(Window& canvas) {
     }
 }
 void GameObject::drawFlicker(Window& canvas, Vec3 flickerColor) {
-    if (ifStartFlicker) {
+    if (ifStartFlicker != 0) {
         for (unsigned int i = 0; i < sprite.width; i++) {
             for (unsigned int j = 0; j < sprite.height; j++) {
                 if (screenPos.x + i >= 0 && screenPos.x + i < canvas.getWidth() &&
                     screenPos.y + j >= 0 && screenPos.y + j < canvas.getHeight()) {
                     if (sprite.alphaAt(i, j) > 200) {
-                        canvas.draw(i + screenPos.x, j + screenPos.y, flickerColor.x, flickerColor.y, flickerColor.z);
+                        if(ifStartFlicker == 1) canvas.draw(i + screenPos.x, j + screenPos.y, flickerColor.x, flickerColor.y, flickerColor.z);
+                        else canvas.draw(i + screenPos.x, j + screenPos.y, 0, 255, 70); 
                     }
                 }
             }
@@ -68,9 +69,9 @@ void GameObject::updateProjectiles(float dt, GameObject& obj, Camera& camera) {
     // check if projectiles hit the target (Player/NPC)
     if (projs.checkProjEntityCollision(midObjWorldPos, obj.getSpriteSize())) {
         // set flag to draw target with flickering effect to show it's hitted by projectile
-        obj.setIfStartFlicker(true);
+        obj.setIfStartFlicker(1);
         // reduce target obj health value for 60 when hit by each projectile
-        obj.applyDamage(60); 
+        obj.applyDamage(linearDamage);
     }
 }
 
@@ -81,10 +82,10 @@ void GameObject::drawProjectiles(Window& canvas, int projSize, Vec3 color) {
 
 void GameObject::updateFlickerState(float dt) {
     // checks if the flicker effect should stop based on elapsed time 
-    if (ifStartFlicker) {
+    if (ifStartFlicker!=0) {
         if (flickerTimer < flickerDuration) flickerTimer += dt;
         else {
-            ifStartFlicker = false;
+            ifStartFlicker = 0;
             flickerTimer = 0.f;
         }
     }
