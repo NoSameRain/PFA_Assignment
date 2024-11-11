@@ -19,8 +19,8 @@ protected:
 	float ProjSpeed; // the speed of object's projectiles
 	int shootingRange; // Maximum distance the object's projectiles can travel
 
-	int health=1000; // Initial health level of the object; decreases when the object is attacked
-	int maxHealth=1000; // Initial health level of the object, won't decrease
+	int health=500; // Initial health level of the object; decreases when the object is attacked
+	int maxHealth=500; // Initial health level of the object, won't decrease
 	float speed=0.f;
 
 	// Indicates if object should start flickering (e.g., upon being hit)
@@ -44,6 +44,9 @@ public:
 	}
 	string getSpriteName() {
 		return Spritefilename;
+	}
+	int getMaxHealth() const{
+		return maxHealth;
 	}
 	void setSprite() {
 		sprite.load(Spritefilename);

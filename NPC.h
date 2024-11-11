@@ -17,7 +17,6 @@ public:
 	NPC(const NPC& other);
 	NPC& operator=(const NPC& other);
 	int getHealth() const;
-	int getMaxHealth() const;
 	int getNPCPlayerDistance() const;
 	int getSpeed()const;
 	void update(float dt, Vec2& playerPos, Camera& cam);

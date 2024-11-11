@@ -111,6 +111,7 @@ int main() {
 
         // draw player -----------------------------
         hero.draw(canvas);
+        hero.drawHealthBar(canvas);
         // draw player's flicker effect when player is hit by projectile or collide with NPC
         hero.drawFlicker(canvas, playerFlickerColor);
         // draw player's projectiles when linear attack triggered

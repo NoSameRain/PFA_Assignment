@@ -163,6 +163,7 @@ void NPCmanager::checkNPCPlayerCollision(Player& player) {
         if (npc_array[i] != nullptr) {
             if (npc_array[i]->checkCollision(player.getWorldPos())) {
                 player.setIfStartFlicker(1);
+                player.applyDamage(1);
             }
         }
     }

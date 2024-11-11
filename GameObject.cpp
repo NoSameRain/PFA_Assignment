@@ -64,6 +64,7 @@ void GameObject::drawHealthBar(Window& canvas) {
                 canvas.draw(i + startPosX, j + startPosY, 0, 0, 0);
                 //draw red health bar based on the current health level
                 if (i <= health/10) canvas.draw(i + startPosX, j + startPosY, 255, 0, 0);
+                if (maxHealth == 500 && i <= health / 10) canvas.draw(i + startPosX, j + startPosY, 255, 255, 0);
             }
         }
     }
@@ -90,7 +91,8 @@ void GameObject::updateProjectiles(float dt, GameObject& obj, Camera& camera) {
         // set flag to draw target with flickering effect to show it's hitted by projectile
         obj.setIfStartFlicker(1);
         // reduce target obj health value for 60 when hit by each projectile
-        obj.applyDamage(linearDamage);
+        if(obj.getMaxHealth()==500) obj.applyDamage(1); // if obj is player
+        else obj.applyDamage(linearDamage);
     }
 }
 

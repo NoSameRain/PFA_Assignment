@@ -9,7 +9,7 @@ const unsigned int playerSpriteSize = 48; //player png size is 48*48
 const unsigned int npcSpriteSize = 32;
 
 const int aggroRange = 450;
-const int stopAggroDistance = 72;
+const int stopAggroDistance = 40;
 
 const int linearAttackRange = 150;
 const int AOEAttackRange = 300;
